@@ -8,22 +8,22 @@ use Doctrine\Persistence\ObjectManager;
 
 class EcurieFixtures extends Fixture
 {
-    public const ECURIES = [
-        'Scuderia Ferrari',
-        'Mercedes-AMG Petronas',
-        'Red Bull Racing',
-        'Alpine F1 Team',
-    ];
-
     public function load(ObjectManager $manager): void
     {
-        foreach (self::ECURIES as $nom) {
+        $ecuriesData = [
+            ['Name' => 'Scuderia Ferrari', 'Car' => 'F1-75'],
+            ['Name' => 'Mercedes-AMG Petronas', 'Car' => 'W14'],
+        ];
+
+        foreach ($ecuriesData as $data) {
             $ecurie = new Ecurie();
-            $ecurie->setNom($nom);
+            $ecurie->setName($data['Name']);
+            $ecurie->setCar($data['Car']);
 
             $manager->persist($ecurie);
 
-            $this->addReference('ecurie' . $nom, $ecurie);
+            // Référence pour les pilotes et infractions
+            $this->addReference('ecurie_' . $data['Name'], $ecurie);
         }
 
         $manager->flush();

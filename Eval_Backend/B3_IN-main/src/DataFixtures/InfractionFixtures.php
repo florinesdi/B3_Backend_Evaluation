@@ -11,27 +11,21 @@ class InfractionFixtures extends Fixture implements DependentFixtureInterface
 {
     public function load(ObjectManager $manager): void
     {
-        $infractions = [
-            ['Grand Prix de Monaco', 'CharlesLeclerc', null, 'Excès de vitesse dans les stands', 3, null, '2024-05-26'],
-            ['Grand Prix de France', null, 'Alpine F1 Team', 'Non-respect du règlement technique', null, 5000, '2024-07-21'],
-            ['Grand Prix d’Italie', 'LewisHamilton', null, 'Accrochage avec un autre pilote', 2, null, '2024-09-08'],
+        $infractionsData = [
+            ['Type' => 'Vitesse', 'Points' => 3, 'Amount' => 100.0, 'Description' => 'Excès de vitesse en course', 'Date' => '2023-08-01', 'RaceName' => 'GP Monaco', 'Pilote' => 'Charles_Leclerc', 'Ecurie' => 'Scuderia Ferrari'],
+            ['Type' => 'Collision', 'Points' => 5, 'Amount' => 0, 'Description' => 'Collision avec un autre pilote', 'Date' => '2023-09-10', 'RaceName' => 'GP Italie', 'Pilote' => 'Lewis_Hamilton', 'Ecurie' => 'Mercedes-AMG Petronas'],
         ];
 
-        foreach ($infractions as [$course, $piloteRef, $ecurieNom, $description, $penalite, $amende, $date]) {
+        foreach ($infractionsData as $data) {
             $infraction = new Infraction();
-            $infraction->setCourse($course);
-            $infraction->setDescription($description);
-            $infraction->setDate(new \DateTime($date));
-            $infraction->setPenalitePoints($penalite);
-            $infraction->setAmendeEuros($amende);
-
-            if ($piloteRef) {
-                $infraction->setPilote($this->getReference('pilote' . $piloteRef));
-            }
-
-            if ($ecurieNom) {
-                $infraction->setEcurie($this->getReference('ecurie' . $ecurieNom));
-            }
+            $infraction->setType($data['Type']);
+            $infraction->setPoints($data['Points']);
+            $infraction->setAmount($data['Amount']);
+            $infraction->setDescription($data['Description']);
+            $infraction->setDate(new \DateTime($data['Date']));
+            $infraction->setRaceName($data['RaceName']);
+            $infraction->setPilote($this->getReference('pilote_' . $data['Pilote']));
+            $infraction->setEcurie($this->getReference('ecurie_' . $data['Ecurie']));
 
             $manager->persist($infraction);
         }
@@ -41,6 +35,6 @@ class InfractionFixtures extends Fixture implements DependentFixtureInterface
 
     public function getDependencies(): array
     {
-        return [PiloteFixtures::class, EcurieFixtures::class];
+        return [PilotesFixtures::class];
     }
 }
