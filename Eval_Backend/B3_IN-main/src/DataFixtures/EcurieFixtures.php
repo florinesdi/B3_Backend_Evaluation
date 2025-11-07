@@ -11,8 +11,9 @@ class EcurieFixtures extends Fixture
     public function load(ObjectManager $manager): void
     {
         $ecuriesData = [
-            ['Name' => 'Scuderia Ferrari', 'Car' => 'F1-75'],
-            ['Name' => 'Mercedes-AMG Petronas', 'Car' => 'W14'],
+            ['Name' => 'Ferrari', 'Car' => 'F1-75'],
+            ['Name' => 'Mercedes', 'Car' => 'W14'],
+            ['Name' => 'Red Bull', 'Car' => 'RB19'],
         ];
 
         foreach ($ecuriesData as $data) {
@@ -23,7 +24,7 @@ class EcurieFixtures extends Fixture
             $manager->persist($ecurie);
 
             // Référence pour les pilotes et infractions
-            $this->addReference('ecurie_' . $data['Name'], $ecurie);
+            $this->addReference('ecurie_' . str_replace(' ', '_', $data['Name']), $ecurie);
         }
 
         $manager->flush();

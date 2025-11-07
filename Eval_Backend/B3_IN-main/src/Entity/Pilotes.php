@@ -1,111 +1,31 @@
 <?php
-
 namespace App\Entity;
 
-use App\Repository\PilotesRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: PilotesRepository::class)]
+#[ORM\Entity]
 class Pilotes
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    #[ORM\Id, ORM\GeneratedValue, ORM\Column(type:"integer")]
+    private int $id;
 
-    #[ORM\Column(length: 50)]
-    private ?string $FirstName = null;
+    #[ORM\Column(type:"string", length:255)]
+    private string $firstName;
 
-    #[ORM\Column(length: 50)]
-    private ?string $LastName = null;
+    #[ORM\Column(type:"string", length:255)]
+    private string $lastName;
 
-    #[ORM\Column(nullable: true)]
-    private ?int $Points = null;
+    #[ORM\Column(type:"integer")]
+    private int $points = 12;
 
-    #[ORM\Column]
-    private ?\DateTime $StartDate = null;
+    #[ORM\Column(type:"string", length:50)]
+    private string $statut;
 
-    #[ORM\Column(length: 50)]
-    private ?string $Statut = null;
+    #[ORM\Column(type:"datetime")]
+    private \DateTimeInterface $startDate;
 
-    #[ORM\ManyToOne(inversedBy: 'pilotes')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\ManyToOne(targetEntity:Ecurie::class, inversedBy:"pilotes")]
     private ?Ecurie $ecurie = null;
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
-    public function getFirstName(): ?string
-    {
-        return $this->FirstName;
-    }
-
-    public function setFirstName(string $FirstName): static
-    {
-        $this->FirstName = $FirstName;
-
-        return $this;
-    }
-
-    public function getLastName(): ?string
-    {
-        return $this->LastName;
-    }
-
-    public function setLastName(string $LastName): static
-    {
-        $this->LastName = $LastName;
-
-        return $this;
-    }
-
-    public function getPoints(): ?int
-    {
-        return $this->Points;
-    }
-
-    public function setPoints(?int $Points): static
-    {
-        $this->Points = $Points;
-
-        return $this;
-    }
-
-    public function getStartDate(): ?\DateTime
-    {
-        return $this->StartDate;
-    }
-
-    public function setStartDate(\DateTime $StartDate): static
-    {
-        $this->StartDate = $StartDate;
-
-        return $this;
-    }
-
-    public function getStatut(): ?string
-    {
-        return $this->Statut;
-    }
-
-    public function setStatut(string $Statut): static
-    {
-        $this->Statut = $Statut;
-
-        return $this;
-    }
-
-    public function getEcurie(): ?Ecurie
-    {
-        return $this->ecurie;
-    }
-
-    public function setEcurie(?Ecurie $ecurie): static
-    {
-        $this->ecurie = $ecurie;
-
-        return $this;
-    }
+    // getters & setters
 }

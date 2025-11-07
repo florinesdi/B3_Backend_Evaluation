@@ -1,43 +1,46 @@
 <?php
 
-namespace App\Repository;
+namespace App\DataFixtures;
 
 use App\Entity\Infraction;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Persistence\ObjectManager;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
-/**
- * @extends ServiceEntityRepository<Infraction>
- */
-class InfractionRepository extends ServiceEntityRepository
+class InfractionFixtures extends Fixture implements DependentFixtureInterface
 {
-    public function __construct(ManagerRegistry $registry)
+    public function load(ObjectManager $manager): void
     {
-        parent::__construct($registry, Infraction::class);
+        $infractionsData = [
+            ['type'=>'penalite','points'=>3,'montant'=>null,'description'=>'Dépassement dangereux','pilote'=>'Lewis_Hamilton','ecurie'=>null,'date'=>'2025-06-01'],
+            ['type'=>'amende','points'=>null,'montant'=>5000,'description'=>'Violation technique','pilote'=>null,'ecurie'=>'Ferrari','date'=>'2025-06-02'],
+            ['type'=>'penalite','points'=>2,'montant'=>null,'description'=>'Collision en course','pilote'=>'Max_Verstappen','ecurie'=>null,'date'=>'2025-06-03'],
+        ];
+
+        foreach ($infractionsData as $data) {
+            $infraction = new Infraction();
+            $infraction->setType($data['type']);
+            $infraction->setPoints($data['points']);
+            $infraction->setMontant($data['montant']);
+            $infraction->setDescription($data['description']);
+            $infraction->setDate(new \DateTime($data['date']));
+
+            if($data['pilote']) {
+                $infraction->setPilote($this->getReference('pilote_' . $data['pilote']));
+            }
+
+            if($data['ecurie']) {
+                $infraction->setEcurie($this->getReference('ecurie_' . str_replace(' ', '_', $data['ecurie'])));
+            }
+
+            $manager->persist($infraction);
+        }
+
+        $manager->flush();
     }
 
-//    /**
-//     * @return Infraction[] Returns an array of Infraction objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('i')
-//            ->andWhere('i.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('i.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
-
-//    public function findOneBySomeField($value): ?Infraction
-//    {
-//        return $this->createQueryBuilder('i')
-//            ->andWhere('i.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    public function getDependencies(): array
+    {
+        return [PilotesFixtures::class];
+    }
 }
